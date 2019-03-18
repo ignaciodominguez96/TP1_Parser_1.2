@@ -6,20 +6,13 @@
 #include "pcmld.h"
 
 
-#error "ver que son esos defines"
-#define MAX_TEST_BAD_ARGS 10
-#define NUM_BAD_ARG_TESTS 9
+
 
 #define EXIT_LOOP 0
 
 #define MAX_NUM_VALUE	5200
 #define	MIN_NUM_VALUE	-200
 
-
-// compilamos con usual en 1 si se quiere probar el funcionamiento en general sino 0 para desactivarlo
-#define USUAL 0
-//idem anterior pero con los casos de prueba
-#define TEST_BENCH 1
 
 enum type_of_operand { KEY, VALUE, PARAMETER };
 
@@ -59,60 +52,76 @@ int main(int argc, char*argv[]) {
 	user_info.p2_valid_value = &valid_values;
 	user_info.p2_valid_param = &valid_param;
 
-	pCallback p = parseCallback;
+	pCallback p2_function = parseCallback;
 
 
-	//  Este printf para cuando parsecmdline es usado con la consola
-#if USUAL
-	printf("%d\n", parseCmdLine(argc, argv, p, &user_info));
-#endif
+	/////////////////////////////
+
+	printf("Prueba 1 ---> Error de Forma 1: Opción sin valor {'path','-key'} \n ");
+
+	char *test1_argv[] = { "path", "-" };
+	int test1_argc = sizeof(test1_argv) / sizeof(test1_argv[0]) - 1;
+
+	if ( parseCmdline(test1_argc, test1_argv, p2_function, &user_info) == PARSER_ERROR)
+		printf("Prueba Exitosa \n\n");
+	else
+		printf("Prueba Fallada \n\n");
+
+	/////////////////////////////
+
+	printf("Prueba 2 ---> Error de Forma 2: Opción sin clave {'path','-'} \n ");
+
+	char * test2_argv[] = { "path", "-" };
+	int test2_argc = sizeof(test2_argv) / sizeof(test2_argv[0]) - 1;
+
+	if ( parseCmdline(test2_argc, test2_argv, p2_function, &user_info) == PARSER_ERROR)
+		printf("Prueba Exitosa \n\n");
+	else
+		printf("Prueba Fallada \n\n");
 
 
-#if TEST_BENCH
-	/*BANCO DE PRUEBAS:
-	Aclaración:
-	tenemos listas de opciones, parametros y values válidos que por lo pronto
-	solo se verifica que esten en la lista, no que las opciones y los values sean
-	compatibles entre sí.
-	Se añade como ultimo elemento un puntero a null simulando el puntero a null
-	que nos da argv[argc]
-	*/
+	/////////////////////////////
 
+	printf("Prueba 3 ---> Opción válida: Opción con clave y valor {'path','-key','value'} \n ");
 
+	char * test3_argv[] = { "path", "-key","value" };
+	int test3_argc = sizeof(test3_argv) / sizeof(test3_argv[0]) - 1;
 
-	// Casos buenos : 
+	if ( parseCmdline(test3_argc, test3_argv, p2_function, &user_info) != PARSER_ERROR)
+		printf("Prueba Exitosa \n\n");
+	else
+		printf("Prueba Fallada \n\n");
 
+	/////////////////////////////
 
-	char *good_test1[] = { "miprog","-size","grow",NULL }; // option valida y value valido
-	char *good_test2[] = { "miprog","-size", "grow", "-font","arial", NULL };
-	char *good_test3[] = { "miprog","hello",NULL }; // parametro valido
+	printf("Prueba 4 ---> Opción válida 2: Opción con clave (con ademas el prefijo de la clave) y valor {'path','--key','value'} \n ");
 
-	printf("%d\n", parseCmdline((sizeof(good_test1) / sizeof(good_test1[0])) - 1, good_test1, p, &user_info));
-	printf("%d\n", parseCmdline((sizeof(good_test2) / sizeof(good_test1[0])) - 1, good_test2, p, &user_info));
-	printf("%d\n", parseCmdline((sizeof(good_test3) / sizeof(good_test1[0])) - 1, good_test3, p, &user_info));
+	char * test4_argv[] = { "path", "--key","value" };
+	int test4_argc = sizeof(test4_argv) / sizeof(test4_argv[0]) - 1;
 
-	// Casos malos:
-	char *matriz_prueba[NUM_BAD_ARG_TESTS][MAX_TEST_BAD_ARGS] = { {"miprog", "-", NULL}, // - sin option ni value
-												{"miprog","-asd", NULL}, // option no valida sin value
-												{"miprog","-size",NULL},// option valida pero sin value
-												{"miprog","-size","asd",NULL}, // option valida pero con value invalido
+	if ( parseCmdline(test4_argc, test4_argv, p2_function, &user_info) != PARSER_ERROR)
+		printf("Prueba Exitosa \n\n");
+	else
+		printf("Prueba Fallada \n\n");
 
-												{"miprog","-size","grow", "-font","asd",NULL}, // primer option valida 2da option valida y value no valido
-												{"miprog","-size","grow", "-asd","arial",NULL}, // option valida y segunda option no valida
+	/////////////////////////////
 
+	printf("Prueba 5 ---> Opción válida 3: Opción con clave y valor (con ademas el prefijo de la clave) {'path','-key','-value'} \n ");
 
-												{"miprog","asd",NULL}, //parametro no valido
-												{"miprog","hello","asd",NULL}, //parametro 1 valido , parametro 2 no valido
-												{"miprog","hello","-size",NULL} }; // parametro valido, opcion valida pero sin value (al final)
+	char * test5_argv[] = { "path", "-key","-value" };
+	int test5_argc = sizeof(test5_argv) / sizeof(test5_argv[0]) - 1;
 
+	if ( parseCmdline(test5_argc, test5_argv, p2_function, &user_info) != PARSER_ERROR)
+		printf("Prueba Exitosa \n\n");
+	else
+		printf("Prueba Fallada \n\n");
 
-	int i;
-	for (i = 0; i < NUM_BAD_ARG_TESTS; i++) {
-		printf("prueba %d:  resultado:%d \n", i + 1, parseCmdline(MAX_TEST_BAD_ARGS, matriz_prueba[i], p, &user_info));
-	}
+	/////////////////////////////
 
-#endif
+	getchar();
+
 	return 0;
+
 }
 
 
