@@ -1,18 +1,18 @@
 #include <stdio.h>
 #include <string.h>
+#include <stdbool.h>
 #include <stdlib.h>     /* atof */
 #include <ctype.h>		/* isdigit */
 #include "pcmld.h"
 
 
 
-
-#define FALSE 0
-#define TRUE 1
 #define MAX_TEST_BAD_ARGS 10
 #define NUM_BAD_ARG_TESTS 9
-#define STOP 0
 
+#define EXIT_LOOP 0
+
+#error "poner rango de numeros value ---- usar defines MAX y MIN"
 
 #define MAX_NUM_VALUE	5200
 #define	MIN_NUM_VALUE	-200
@@ -23,8 +23,7 @@
 //idem anterior pero con los casos de prueba
 #define TEST_BENCH 1
 
-enum answers { NO, YES };
-enum types { OPTION, VALUE, PARAM };
+enum type_of_operand { KEY, VALUE, PARAMETER };
 
 typedef struct {
 
@@ -40,10 +39,10 @@ typedef struct {
 
 int parseCallback(char *key, char *value, void *userData);
 /*Funciones que utiliza el callback*/
-int validate_letterstr(char *str_to_cmp, void *userData, int kindofop);
+bool is_valid_str(char *str, void *valid_strs, int type_of_operand);
 // validate_letterstr devuelve 1 si el string pertenece a la lista de opciones/parametros validos sino 0
 
-int str_is_number(const char* str); //funcion para fijarse si el string es un numero float (positivo o negativo)
+bool str_is_number(const char* str); //funcion para fijarse si el string es un numero float (positivo o negativo)
 
 int main(int argc, char*argv[]) {
 
@@ -121,16 +120,16 @@ int main(int argc, char*argv[]) {
 
 int parseCallback(char *key, char *value, void *userData) {
 
-	int noerror = TRUE;
+	bool noerror = true;
 	userdata_t * p2userinfo = (userdata_t*)userData;
 	if (key) { // errores correspondientes a opciones	
 		if (!value) { // si es opcion y es el ultimo argumento -> error
 
-			noerror = FALSE;
+			noerror = false;
 		}
 		if (noerror) {
 
-			noerror = validate_letterstr(key + 1, userData, OPTION);
+			noerror = validate_letterstr(key + 1, userData, KEY);
 			// evadimos el OPTION_IDENTIFIER
 		}
 
@@ -143,64 +142,74 @@ int parseCallback(char *key, char *value, void *userData) {
 	}
 	else { // errores correspondientes a parametros
 
-		noerror = validate_letterstr(value, userData, PARAM);
+		noerror = validate_letterstr(value, userData, PARAMETER);
 
 	}
 	return noerror;
 }
 
 
+bool is_valid_str(char *str, void *valid_strs, int type_of_operand) {
 
-int validate_letterstr(char *str_to_cmp, void *userData, int kindofop) {
-
-	int noerrorsofar;
-	userdata_t *p2udata = (userdata_t*)userData;
+	bool noerrorsofar;
+	userdata_t *p2udata = (userdata_t*)valid_strs;
 	int i;
 
-	if (kindofop == OPTION) { // si no es una opcion se da por sentado que es un parametro
+	if (type_of_operand == KEY) { // si no es una opcion se da por sentado que es un parametro
 		i = p2udata->cant_valid_options;
 	}
-	else if (kindofop == VALUE) {
+	else if (type_of_operand == VALUE) {
 		i = p2udata->cant_valid_values;
 	}
-	else if (kindofop == PARAM) {
+	else if (type_of_operand == PARAMETER) {
 		i = p2udata->cant_valid_params;
 	}
 
-	noerrorsofar = FALSE;
+	noerrorsofar = false;
 
 
-	if (kindofop == OPTION) {
+	if (type_of_operand == KEY) {
 
 		while (i--) {
-			if (!strcmp(str_to_cmp, *(*(p2udata->p2valid_cmd) + i))) {
-				i = STOP;
-				noerrorsofar = TRUE;
+			if (!strcmp(str, *(*(p2udata->p2valid_cmd) + i))) {
+				i = EXIT_LOOP;
+				noerrorsofar = true;
 			}
 		}
 	}
-	else if (kindofop == VALUE) {
+	else if (type_of_operand == VALUE) {
 
 		while (i--) {
-			if (!strcmp(str_to_cmp, *(*(p2udata->p2valid_value) + i))) {
-				i = STOP;
-				noerrorsofar = TRUE;
+			if (!strcmp(str, *(*(p2udata->p2valid_value) + i))) {
+				i = EXIT_LOOP;
+				noerrorsofar = true;
 			}
-			else if (str_is_number(*(*(p2udata->p2valid_value) + i)) == FALSE) //value puede ser un numero dentro los rango definidos
+			else if (str_is_number(*(*(p2udata->p2valid_value) + i)) == false) //value can be a number
 			{
-				i = STOP;
-				noerrorsofar = TRUE;
+				i = EXIT_LOOP;
+				noerrorsofar = true;
+			}
+			else 
+			{
+				double number = atof(*(*(p2udata->p2valid_value) + i)); //i know that is a number, but i want to if it's in the rank
+				
+				if (!((number<MAX_NUM_VALUE) && (number > MIN_NUM_VALUE))) //but value can be a number between a rank
+				{
+					i = EXIT_LOOP;
+					noerrorsofar = true;
+
+				}
 			}
 		}
 
 	}
-	else if (kindofop == PARAM) {
+	else if (type_of_operand == PARAMETER) {
 
 		while (i--) {
 
-			if (!strcmp(str_to_cmp, *(*(p2udata->p2valid_param) + i))) {
-				i = STOP;
-				noerrorsofar = TRUE;
+			if (!strcmp(str, *(*(p2udata->p2valid_param) + i))) {
+				i = EXIT_LOOP;
+				noerrorsofar = true;
 			}
 		}
 
@@ -211,20 +220,15 @@ int validate_letterstr(char *str_to_cmp, void *userData, int kindofop) {
 }
 
 
-
-
-
-
-
-int str_is_number(const char* str)
+bool str_is_number(const char* str)
 {
-	int posibbility_point = TRUE;
+	bool posibbility_point = true;
 
 	if (*str) // posibilidad de numero negativo 
 	{
 		if (!((isdigit(*str)) || (*str == '-')))
 		{
-			return FALSE;
+			return false;
 		}
 		else
 		{
@@ -239,23 +243,23 @@ int str_is_number(const char* str)
 		{
 			if (*str == '.')
 			{
-				if (posibbility_point == FALSE)
+				if (posibbility_point == false)
 				{
-					return FALSE;
+					return false;
 				}
 				else
 				{
-					posibbility_point = FALSE;
+					posibbility_point = false;
 				}
 			}
 			else
 			{
-				return FALSE;
+				return false;
 			}
 
 		}
 
 	}
 
-	return TRUE;
+	return true;
 }
