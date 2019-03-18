@@ -37,8 +37,8 @@ bool str_is_number(const char* str); //funcion para fijarse si el string es un n
 
 int main(int argc, char*argv[]) {
 
-	char *valid_key[] = { "size","font","queue","color" }; // lista de opciones válidas
-	char *valid_values[] = { "arial","times","grow" };
+	char *valid_key[] = { "key","font","queue","color" }; // lista de opciones válidas
+	char *valid_values[] = { "-value","value","times","grow" };
 	char *valid_param[] = { "hello","bye" };	// lista de parametros válidos
 
 	userdata_t user_info;
@@ -106,9 +106,9 @@ int main(int argc, char*argv[]) {
 
 	/////////////////////////////
 
-	printf("Prueba 5 ---> Opción válida 3: Opción con clave y valor (con ademas el prefijo de la clave) {'path','-key','-value'} \n ");
+	printf("Prueba 5 ---> Opción válida 3: Opción con clave y valor (con ademas el prefijo de la clave) {'path','--key','-value'} \n ");
 
-	char * test5_argv[] = { "path", "-key","-value" };
+	char * test5_argv[] = { "path", "--key","-value" };
 	int test5_argc = sizeof(test5_argv) / sizeof(test5_argv[0]) - 1;
 
 	if ( parseCmdline(test5_argc, test5_argv, p2_function, &user_info) != PARSER_ERROR)
