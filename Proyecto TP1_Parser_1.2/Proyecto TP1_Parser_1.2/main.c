@@ -6,13 +6,11 @@
 #include "pcmld.h"
 
 
-
+#error "ver que son esos defines"
 #define MAX_TEST_BAD_ARGS 10
 #define NUM_BAD_ARG_TESTS 9
 
 #define EXIT_LOOP 0
-
-#error "poner rango de numeros value ---- usar defines MAX y MIN"
 
 #define MAX_NUM_VALUE	5200
 #define	MIN_NUM_VALUE	-200
@@ -27,13 +25,13 @@ enum type_of_operand { KEY, VALUE, PARAMETER };
 
 typedef struct {
 
-	int cant_valid_options;
-	int cant_valid_params;
+	int cant_valid_keys;
 	int cant_valid_values;
-
-	char *(*p2valid_cmd)[];
-	char *(*p2valid_param)[];
-	char *(*p2valid_value)[];
+	int cant_valid_params;
+	
+	char *(*p2_valid_key)[];
+	char *(*p2_valid_param)[];
+	char *(*p2_valid_value)[];
 
 } userdata_t;
 
@@ -46,20 +44,20 @@ bool str_is_number(const char* str); //funcion para fijarse si el string es un n
 
 int main(int argc, char*argv[]) {
 
-	char *valid_cmd[] = { "size","font","queue","color" }; // lista de opciones válidas
+	char *valid_key[] = { "size","font","queue","color" }; // lista de opciones válidas
 	char *valid_values[] = { "arial","times","grow" };
 	char *valid_param[] = { "hello","bye" };	// lista de parametros válidos
 
 	userdata_t user_info;
 
-	user_info.cant_valid_options = sizeof(valid_cmd) / sizeof(valid_cmd[0]);
+	user_info.cant_valid_keys = sizeof(valid_key) / sizeof(valid_key[0]);
 	user_info.cant_valid_params = sizeof(valid_param) / sizeof(valid_param[0]);
 	user_info.cant_valid_values = sizeof(valid_values) / sizeof(valid_values[0]);
 
 
-	user_info.p2valid_cmd = &valid_cmd;
-	user_info.p2valid_value = &valid_values;
-	user_info.p2valid_param = &valid_param;
+	user_info.p2_valid_key = &valid_key;
+	user_info.p2_valid_value = &valid_values;
+	user_info.p2_valid_param = &valid_param;
 
 	pCallback p = parseCallback;
 
@@ -120,83 +118,83 @@ int main(int argc, char*argv[]) {
 
 int parseCallback(char *key, char *value, void *userData) {
 
-	bool noerror = true;
+	bool no_error = true;
 	userdata_t * p2userinfo = (userdata_t*)userData;
 	if (key) { // errores correspondientes a opciones	
 		if (!value) { // si es opcion y es el ultimo argumento -> error
 
-			noerror = false;
+			no_error = false;
 		}
-		if (noerror) {
+		if (no_error) {
 
-			noerror = validate_letterstr(key + 1, userData, KEY);
+			no_error = is_valid_str(key + 1, userData, KEY);
 			// evadimos el OPTION_IDENTIFIER
 		}
 
-		if (noerror) {
+		if (no_error) {
 
-			noerror = validate_letterstr(value, userData, VALUE);
+			no_error = is_valid_str(value, userData, VALUE);
 
 		}
 
 	}
 	else { // errores correspondientes a parametros
 
-		noerror = validate_letterstr(value, userData, PARAMETER);
+		no_error = is_valid_str(value, userData, PARAMETER);
 
 	}
-	return noerror;
+	return no_error;
 }
 
 
 bool is_valid_str(char *str, void *valid_strs, int type_of_operand) {
 
-	bool noerrorsofar;
-	userdata_t *p2udata = (userdata_t*)valid_strs;
+	bool valid_str;
+	userdata_t *p2_user_data = (userdata_t*)valid_strs;
 	int i;
 
 	if (type_of_operand == KEY) { // si no es una opcion se da por sentado que es un parametro
-		i = p2udata->cant_valid_options;
+		i = p2_user_data->cant_valid_keys;
 	}
 	else if (type_of_operand == VALUE) {
-		i = p2udata->cant_valid_values;
+		i = p2_user_data->cant_valid_values;
 	}
 	else if (type_of_operand == PARAMETER) {
-		i = p2udata->cant_valid_params;
+		i = p2_user_data->cant_valid_params;
 	}
 
-	noerrorsofar = false;
+	valid_str = false;
 
 
 	if (type_of_operand == KEY) {
 
 		while (i--) {
-			if (!strcmp(str, *(*(p2udata->p2valid_cmd) + i))) {
+			if (!strcmp(str, *(*(p2_user_data->p2_valid_key) + i))) {
 				i = EXIT_LOOP;
-				noerrorsofar = true;
+				valid_str = true;
 			}
 		}
 	}
 	else if (type_of_operand == VALUE) {
 
 		while (i--) {
-			if (!strcmp(str, *(*(p2udata->p2valid_value) + i))) {
+			if (!strcmp(str, *(*(p2_user_data->p2_valid_value) + i))) {
 				i = EXIT_LOOP;
-				noerrorsofar = true;
+				valid_str = true;
 			}
-			else if (str_is_number(*(*(p2udata->p2valid_value) + i)) == false) //value can be a number
+			else if (str_is_number(*(*(p2_user_data->p2_valid_value) + i)) == false) //value can be a number
 			{
 				i = EXIT_LOOP;
-				noerrorsofar = true;
+				valid_str = true;
 			}
 			else 
 			{
-				double number = atof(*(*(p2udata->p2valid_value) + i)); //i know that is a number, but i want to if it's in the rank
+				double number = atof(*(*(p2_user_data->p2_valid_value) + i)); //i know that is a number, but i want to if it's in the rank
 				
 				if (!((number<MAX_NUM_VALUE) && (number > MIN_NUM_VALUE))) //but value can be a number between a rank
 				{
 					i = EXIT_LOOP;
-					noerrorsofar = true;
+					valid_str = true;
 
 				}
 			}
@@ -207,15 +205,15 @@ bool is_valid_str(char *str, void *valid_strs, int type_of_operand) {
 
 		while (i--) {
 
-			if (!strcmp(str, *(*(p2udata->p2valid_param) + i))) {
+			if (!strcmp(str, *(*(p2_user_data->p2_valid_param) + i))) {
 				i = EXIT_LOOP;
-				noerrorsofar = true;
+				valid_str = true;
 			}
 		}
 
 	}
 
-	return noerrorsofar;
+	return valid_str;
 
 }
 
