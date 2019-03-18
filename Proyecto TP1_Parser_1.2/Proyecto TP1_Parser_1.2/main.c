@@ -13,6 +13,7 @@
 #define MAX_NUM_VALUE	5200
 #define	MIN_NUM_VALUE	-200
 
+#define STR_EQUAL	0
 
 enum type_of_operand { KEY, VALUE, PARAMETER };
 
@@ -121,7 +122,7 @@ int main(int argc, char*argv[]) {
 
 	printf("Prueba 6 ---> Opción válida 4: Opción con clave y valor numero en rango valido {'path','--key', number_str_in_the_rank } \n ");
 
-	char * test6_argv[] = { "path", "--key","50" };
+	char * test6_argv[] = { "path", "--key","1000" };
 	int test6_argc = sizeof(test6_argv) / sizeof(test6_argv[0]) - 1;
 
 	if (parseCmdline(test6_argc, test6_argv, p2_function, &user_info) != PARSER_ERROR)
@@ -135,7 +136,7 @@ int main(int argc, char*argv[]) {
 
 	printf("Prueba 7 ---> Opción invalida 1: Opción con clave y valor numero en rango invalido {'path','--key', number_str_out_the_rank } \n ");
 
-	char * test7_argv[] = { "path", "--key","20050" };
+	char * test7_argv[] = { "path", "--key","100050" };
 	int test7_argc = sizeof(test7_argv) / sizeof(test7_argv[0]) - 1;
 
 	if (parseCmdline(test7_argc, test7_argv, p2_function, &user_info) == PARSER_ERROR)
@@ -205,7 +206,7 @@ bool is_valid_str(char *str, void *valid_strs, int type_of_operand) {
 	if (type_of_operand == KEY) {
 
 		while (i--) {
-			if (!strcmp(str, *(*(p2_user_data->p2_valid_key) + i))) {
+			if (strcmp(str, *(*(p2_user_data->p2_valid_key) + i)) == STR_EQUAL) {
 				i = EXIT_LOOP;
 				valid_str = true;
 			}
@@ -214,26 +215,24 @@ bool is_valid_str(char *str, void *valid_strs, int type_of_operand) {
 	else if (type_of_operand == VALUE) {
 
 		while (i--) {
-			if (!strcmp(str, *(*(p2_user_data->p2_valid_value) + i))) {
+			if (strcmp(str, *(*(p2_user_data->p2_valid_value) + i)) == STR_EQUAL) {
 				i = EXIT_LOOP;
 				valid_str = true;
 			}
-			else if (str_is_number(*(*(p2_user_data->p2_valid_value) + i)) == false) //value can be a number
+			else if (str_is_number(str) == true) //value can be a number
 			{
-				i = EXIT_LOOP;
-				valid_str = true;
-			}
-			else 
-			{
-				double number = atof(*(*(p2_user_data->p2_valid_value) + i)); //i know that is a number, but i want to if it's in the rank
-				
-				if (!((number<MAX_NUM_VALUE) && (number > MIN_NUM_VALUE))) //but value can be a number between a rank
+				double number = atof(str); //i know that is a number, but i want to if it's in the rank
+
+				if (((number < MAX_NUM_VALUE) && (number > MIN_NUM_VALUE))) //but value can be a number between a rank
 				{
 					i = EXIT_LOOP;
 					valid_str = true;
 
 				}
+				
+				
 			}
+			
 		}
 
 	}
@@ -241,7 +240,7 @@ bool is_valid_str(char *str, void *valid_strs, int type_of_operand) {
 
 		while (i--) {
 
-			if (!strcmp(str, *(*(p2_user_data->p2_valid_param) + i))) {
+			if (strcmp(str, *(*(p2_user_data->p2_valid_param) + i)) == STR_EQUAL) {
 				i = EXIT_LOOP;
 				valid_str = true;
 			}
