@@ -118,6 +118,33 @@ int main(int argc, char*argv[]) {
 
 	/////////////////////////////
 
+
+	printf("Prueba 6 ---> Opción válida 4: Opción con clave y valor numero en rango valido {'path','--key', number_str_in_the_rank } \n ");
+
+	char * test6_argv[] = { "path", "--key","50" };
+	int test6_argc = sizeof(test6_argv) / sizeof(test6_argv[0]) - 1;
+
+	if (parseCmdline(test6_argc, test6_argv, p2_function, &user_info) != PARSER_ERROR)
+		printf("Prueba Exitosa \n\n");
+	else
+		printf("Prueba Fallada \n\n");
+
+	/////////////////////////////
+
+
+
+	printf("Prueba 7 ---> Opción invalida 1: Opción con clave y valor numero en rango invalido {'path','--key', number_str_out_the_rank } \n ");
+
+	char * test7_argv[] = { "path", "--key","20050" };
+	int test7_argc = sizeof(test7_argv) / sizeof(test7_argv[0]) - 1;
+
+	if (parseCmdline(test7_argc, test7_argv, p2_function, &user_info) == PARSER_ERROR)
+		printf("Prueba Exitosa \n\n");
+	else
+		printf("Prueba Fallada \n\n");
+
+	/////////////////////////////
+
 	getchar();
 
 	return 0;
