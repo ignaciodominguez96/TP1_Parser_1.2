@@ -122,7 +122,7 @@ int main(int argc, char*argv[]) {
 
 	printf("Prueba 6 ---> Opción válida 4: Opción con clave y valor numero en rango valido {'path','--key', number_str_in_the_rank } \n ");
 
-	char * test6_argv[] = { "path", "--key","1000" };
+	char * test6_argv[] = { "path", "--key","-190.0005" };
 	int test6_argc = sizeof(test6_argv) / sizeof(test6_argv[0]) - 1;
 
 	if (parseCmdline(test6_argc, test6_argv, p2_function, &user_info) != PARSER_ERROR)
