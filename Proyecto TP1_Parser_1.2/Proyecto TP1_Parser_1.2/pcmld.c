@@ -17,14 +17,15 @@ int parseCmdline(int argv, char* argc[], pCallback p, void* userData)
 	{
 		if (*argc[i] == '-')		//si es una opcion
 		{
-			if (argc[i + 1] == NULL)		//marca error si no tiene valor
+			if (argc[i][1] == '\0') //marca error si la opcion no tiene nombre (hay un '-' solo)
 			{
-				printf("Opcion sin valor\n");
+				printf("Opcion sin nombre\n");
 				return PARSER_ERROR;
 			}
-			else if (argc[i][1] == '\0') //marca error si la opcion no tiene nombre (hay un '-' solo)
+			
+			else if ((i + 1) == argv)		//marca error si no tiene valor
 			{
-				printf("Opcion sin nombre");
+				printf("Opcion sin valor\n");
 				return PARSER_ERROR;
 			}
 			else
