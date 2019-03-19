@@ -39,8 +39,8 @@ INTEGRANTES:
 
 #define EXIT_LOOP 0
 
-#define MAX_NUM_VALUE	5200		//valor maximo que permite como value, sin poner dentro de la lista de value valido
-#define	MIN_NUM_VALUE	-200		//valor minimo que permite como value, sin poner dentro de la lista de value valido
+#define MAX_NUM_VALUE	5200		
+#define	MIN_NUM_VALUE	-200		
 
 #define STR_EQUAL	0
 
