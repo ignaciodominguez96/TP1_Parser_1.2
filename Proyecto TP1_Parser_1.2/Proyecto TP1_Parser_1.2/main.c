@@ -8,9 +8,15 @@
 #include "pcmld.h"
 
 
+
+#if defined(_WIN32) || defined(_WIN64) //si el sistema operativo es WINDOWS
+
 #include <Windows.h>  // API del Sistema Operativo de Windows (Permite trabajar sobre la Consola).
 					  //sacado de 
 					  //https://foro.elhacker.net/programacion_cc/cambio_colores_en_un_solo_printf_en_c-t484932.0.html
+
+#endif // _WIN32 or _WIN64
+
 
 
 //-------------------------------------DEFINES and CONSTANTES---------------------------------------//
@@ -32,6 +38,8 @@ enum type_of_operand { KEY, VALUE, PARAMETER }; //enum que me define los tipos d
 
 
 
+
+#if defined(_WIN32) || defined(_WIN64)
 //enum sacado de https://foro.elhacker.net/programacion_cc/cambio_colores_en_un_solo_printf_en_c-t484932.0.html
 
 enum colors { // Listado de colores (La letra "L" al inicio, indica que es un color más claro que su antecesor).
@@ -51,7 +59,9 @@ enum colors { // Listado de colores (La letra "L" al inicio, indica que es un co
 	LMAGENTA = 13,
 	YELLOW = 14,
 	WHITE = 15
-}; 
+};
+//si el sistema operativo es WINDOWS //si el sistema operativo es WINDOWS
+#endif // _WIN32 or _WIN64
 
 
 
@@ -96,10 +106,15 @@ int is_valid_str(char *str, void *valid_strs, int type_of_operand);
 bool str_is_number(const char* str); //funcion para fijarse si el string es un numero float (positivo o negativo)
 
 
+//si el sistema operativo es WINDOWS
+#if defined(_WIN32) || defined(_WIN64)
 
 void Color(int Background, int Text); // Prototipo de función  
 									  //sacado de 
 									  //https://foro.elhacker.net/programacion_cc/cambio_colores_en_un_solo_printf_en_c-t484932.0.html
+
+
+#endif // _WIN32 or _WIN64
 
 
 
@@ -110,11 +125,24 @@ void Color(int Background, int Text); // Prototipo de función
 int main(int argc, char*argv[]) {
 
 	
+	//si el sistema operativo es WINDOWS
+
+	#if defined(_WIN32) || defined(_WIN64)
 	Color(BLACK, YELLOW);		//Texto en color amarillo y fondo Negro
+	#endif // _WIN32 or _WIN64
+
+	
 	printf("El programa ademas de realizar lo pedido por consigna, acepta como value valido a un numero float que\n ");
 	printf("se encuentre dentro del rango %f y %f , definidas por los defines MIN_NUM_VALUE y MAX_NUM_VALUE \n\n   " , (double) MIN_NUM_VALUE , (double) MAX_NUM_VALUE);
 
+
+	//si el sistema operativo es WINDOWS
+
+	#if defined(_WIN32) || defined(_WIN64)
 	Color(BLACK, WHITE);		// Devolvemos el color original de la consola.
+	#endif // _WIN32 or _WIN64
+
+	
 
 
 
@@ -147,16 +175,39 @@ int main(int argc, char*argv[]) {
 
 	if (parseCmdline(test1_argc, test1_argv, p2_function, &user_info) == PARSER_ERROR)
 	{
+		//si el sistema operativo es WINDOWS
+
+		#if defined(_WIN32) || defined(_WIN64)
 		Color(BLACK, LGREEN); //Texto en color Verde Claro y fondo Negro
+		#endif // _WIN32 or _WIN64
+				
 		printf("Prueba Exitosa \n\n");
+
+		//si el sistema operativo es WINDOWS
+
+		#if defined(_WIN32) || defined(_WIN64)
 		Color(BLACK, WHITE);	// Devolvemos el color original de la consola.
+		#endif // _WIN32 or _WIN64
+
 	}
 		
 	else
 	{
+		//si el sistema operativo es WINDOWS
+
+		#if defined(_WIN32) || defined(_WIN64)
 		Color(BLACK, RED);	//Texto en color rojo y fondo Negro
+		#endif // _WIN32 or _WIN64
+
 		printf("Prueba Fallada \n\n");
-		Color(BLACK, WHITE);	// Devolvemos el color original de la consola.
+
+		//si el sistema operativo es WINDOWS
+
+		#if defined(_WIN32) || defined(_WIN64)
+		Color(BLACK, WHITE);	// Devolvemos el color original de la consola.	
+		#endif // _WIN32 or _WIN64
+
+		
 	}
 		
 
@@ -169,18 +220,42 @@ int main(int argc, char*argv[]) {
 
 	if ( parseCmdline(test2_argc, test2_argv, p2_function, &user_info) == PARSER_ERROR)
 	{
-		Color(BLACK, LGREEN);	//Texto en color Verde Claro y fondo Negro
-		printf("Prueba Exitosa \n\n");
-		Color(BLACK, WHITE);	// Devolvemos el color original de la consola.
-	}
+		//si el sistema operativo es WINDOWS
 
+		#if defined(_WIN32) || defined(_WIN64)
+		Color(BLACK, LGREEN); //Texto en color Verde Claro y fondo Negro
+		#endif // _WIN32 or _WIN64
+
+		
+		printf("Prueba Exitosa \n\n");
+
+		//si el sistema operativo es WINDOWS
+
+		#if defined(_WIN32) || defined(_WIN64)
+		Color(BLACK, WHITE);	// Devolvemos el color original de la consola.
+		#endif // _WIN32 or _WIN64
+
+		
+	}
+		
 	else
 	{
-		Color(BLACK, RED);		//Texto en color rojo y fondo Negro
-		printf("Prueba Fallada \n\n");
-		Color(BLACK, WHITE);	// Devolvemos el color original de la consola.
-	}
+		//si el sistema operativo es WINDOWS
 
+		#if defined(_WIN32) || defined(_WIN64)
+		Color(BLACK, RED);	//Texto en color rojo y fondo Negro
+		#endif // _WIN32 or _WIN64
+
+		printf("Prueba Fallada \n\n");
+
+		//si el sistema operativo es WINDOWS
+
+		#if defined(_WIN32) || defined(_WIN64)
+		Color(BLACK, WHITE);	// Devolvemos el color original de la consola.	
+		#endif // _WIN32 or _WIN64
+
+		
+	}
 
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -192,19 +267,42 @@ int main(int argc, char*argv[]) {
 
 	if ( parseCmdline(test3_argc, test3_argv, p2_function, &user_info) != PARSER_ERROR)
 	{
-		Color(BLACK, LGREEN);	//Texto en color Verde Claro y fondo Negro
+		//si el sistema operativo es WINDOWS
+
+		#if defined(_WIN32) || defined(_WIN64)
+		Color(BLACK, LGREEN); //Texto en color Verde Claro y fondo Negro
+		#endif // _WIN32 or _WIN64
+
+
 		printf("Prueba Exitosa \n\n");
+
+		//si el sistema operativo es WINDOWS
+
+		#if defined(_WIN32) || defined(_WIN64)
 		Color(BLACK, WHITE);	// Devolvemos el color original de la consola.
+		#endif // _WIN32 or _WIN64
+
+
 	}
 
 	else
 	{
-		Color(BLACK, RED);		//Texto en color rojo y fondo Negro
+		//si el sistema operativo es WINDOWS
+
+		#if defined(_WIN32) || defined(_WIN64)
+		Color(BLACK, RED);	//Texto en color rojo y fondo Negro
+		#endif // _WIN32 or _WIN64
+
 		printf("Prueba Fallada \n\n");
-		Color(BLACK, WHITE);	// Devolvemos el color original de la consola.
+
+		//si el sistema operativo es WINDOWS
+
+		#if defined(_WIN32) || defined(_WIN64)
+		Color(BLACK, WHITE);	// Devolvemos el color original de la consola.	
+		#endif // _WIN32 or _WIN64
+
+
 	}
-
-
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	printf("Prueba 4 ---> Opcion valida 2: Opcion con clave (con ademas el prefijo de la clave) y valor {'path','--key','value'} \n ");
@@ -214,18 +312,42 @@ int main(int argc, char*argv[]) {
 
 	if ( parseCmdline(test4_argc, test4_argv, p2_function, &user_info) != PARSER_ERROR)
 	{
-		Color(BLACK, LGREEN);	//Texto en color Verde Claro y fondo Negro
+		//si el sistema operativo es WINDOWS
+
+		#if defined(_WIN32) || defined(_WIN64)
+		Color(BLACK, LGREEN); //Texto en color Verde Claro y fondo Negro
+		#endif // _WIN32 or _WIN64
+
+
 		printf("Prueba Exitosa \n\n");
+
+		//si el sistema operativo es WINDOWS
+
+		#if defined(_WIN32) || defined(_WIN64)
 		Color(BLACK, WHITE);	// Devolvemos el color original de la consola.
+		#endif // _WIN32 or _WIN64
+
+
 	}
 
 	else
 	{
-		Color(BLACK, RED);		//Texto en color rojo y fondo Negro
-		printf("Prueba Fallada \n\n");
-		Color(BLACK, WHITE);	// Devolvemos el color original de la consola.
-	}
+		//si el sistema operativo es WINDOWS
 
+		#if defined(_WIN32) || defined(_WIN64)
+		Color(BLACK, RED);	//Texto en color rojo y fondo Negro
+		#endif // _WIN32 or _WIN64
+
+		printf("Prueba Fallada \n\n");
+
+		//si el sistema operativo es WINDOWS
+
+		#if defined(_WIN32) || defined(_WIN64)
+		Color(BLACK, WHITE);	// Devolvemos el color original de la consola.	
+		#endif // _WIN32 or _WIN64
+
+
+	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -236,16 +358,41 @@ int main(int argc, char*argv[]) {
 
 	if ( parseCmdline(test5_argc, test5_argv, p2_function, &user_info) != PARSER_ERROR)
 	{
-		Color(BLACK, LGREEN);	//Texto en color Verde Claro y fondo Negro
+		//si el sistema operativo es WINDOWS
+
+		#if defined(_WIN32) || defined(_WIN64)
+		Color(BLACK, LGREEN); //Texto en color Verde Claro y fondo Negro
+		#endif // _WIN32 or _WIN64
+
+
 		printf("Prueba Exitosa \n\n");
+
+		//si el sistema operativo es WINDOWS
+
+		#if defined(_WIN32) || defined(_WIN64)
 		Color(BLACK, WHITE);	// Devolvemos el color original de la consola.
+		#endif // _WIN32 or _WIN64
+
+
 	}
 
 	else
 	{
-		Color(BLACK, RED);		//Texto en color rojo y fondo Negro
+		//si el sistema operativo es WINDOWS
+
+		#if defined(_WIN32) || defined(_WIN64)
+		Color(BLACK, RED);	//Texto en color rojo y fondo Negro
+		#endif // _WIN32 or _WIN64
+
 		printf("Prueba Fallada \n\n");
-		Color(BLACK, WHITE);	// Devolvemos el color original de la consola.
+
+		//si el sistema operativo es WINDOWS
+
+		#if defined(_WIN32) || defined(_WIN64)
+		Color(BLACK, WHITE);	// Devolvemos el color original de la consola.	
+		#endif // _WIN32 or _WIN64
+
+
 	}
 
 
@@ -259,18 +406,42 @@ int main(int argc, char*argv[]) {
 
 	if (parseCmdline(test6_argc, test6_argv, p2_function, &user_info) != PARSER_ERROR)
 	{
-		Color(BLACK, LGREEN);	//Texto en color Verde Claro y fondo Negro
+		//si el sistema operativo es WINDOWS
+
+		#if defined(_WIN32) || defined(_WIN64)
+		Color(BLACK, LGREEN); //Texto en color Verde Claro y fondo Negro
+		#endif // _WIN32 or _WIN64
+
+
 		printf("Prueba Exitosa \n\n");
+
+		//si el sistema operativo es WINDOWS
+
+		#if defined(_WIN32) || defined(_WIN64)
 		Color(BLACK, WHITE);	// Devolvemos el color original de la consola.
+		#endif // _WIN32 or _WIN64
+
+
 	}
 
 	else
 	{
-		Color(BLACK, RED);		//Texto en color rojo y fondo Negro
-		printf("Prueba Fallada \n\n");
-		Color(BLACK, WHITE);	// Devolvemos el color original de la consola.
-	}
+		//si el sistema operativo es WINDOWS
 
+		#if defined(_WIN32) || defined(_WIN64)
+		Color(BLACK, RED);	//Texto en color rojo y fondo Negro
+		#endif // _WIN32 or _WIN64
+
+		printf("Prueba Fallada \n\n");
+
+		//si el sistema operativo es WINDOWS
+
+		#if defined(_WIN32) || defined(_WIN64)
+		Color(BLACK, WHITE);	// Devolvemos el color original de la consola.	
+		#endif // _WIN32 or _WIN64
+
+
+	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -283,18 +454,42 @@ int main(int argc, char*argv[]) {
 
 	if (parseCmdline(test7_argc, test7_argv, p2_function, &user_info) == PARSER_ERROR)
 	{
-		Color(BLACK, LGREEN);	//Texto en color Verde Claro y fondo Negro
+		//si el sistema operativo es WINDOWS
+
+		#if defined(_WIN32) || defined(_WIN64)
+		Color(BLACK, LGREEN); //Texto en color Verde Claro y fondo Negro
+		#endif // _WIN32 or _WIN64
+
+
 		printf("Prueba Exitosa \n\n");
+
+		//si el sistema operativo es WINDOWS
+
+		#if defined(_WIN32) || defined(_WIN64)
 		Color(BLACK, WHITE);	// Devolvemos el color original de la consola.
+		#endif // _WIN32 or _WIN64
+
+
 	}
 
 	else
 	{
-		Color(BLACK, RED);		//Texto en color rojo y fondo Negro
-		printf("Prueba Fallada \n\n");
-		Color(BLACK, WHITE);	// Devolvemos el color original de la consola.
-	}
+		//si el sistema operativo es WINDOWS
 
+		#if defined(_WIN32) || defined(_WIN64)
+		Color(BLACK, RED);	//Texto en color rojo y fondo Negro
+		#endif // _WIN32 or _WIN64
+
+		printf("Prueba Fallada \n\n");
+
+		//si el sistema operativo es WINDOWS
+
+		#if defined(_WIN32) || defined(_WIN64)
+		Color(BLACK, WHITE);	// Devolvemos el color original de la consola.	
+		#endif // _WIN32 or _WIN64
+
+
+	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -305,16 +500,41 @@ int main(int argc, char*argv[]) {
 
 	if (parseCmdline(test8_argc, test8_argv, p2_function, &user_info) != PARSER_ERROR)
 	{
-		Color(BLACK, LGREEN);	//Texto en color Verde Claro y fondo Negro
+		//si el sistema operativo es WINDOWS
+
+		#if defined(_WIN32) || defined(_WIN64)
+		Color(BLACK, LGREEN); //Texto en color Verde Claro y fondo Negro
+		#endif // _WIN32 or _WIN64
+
+
 		printf("Prueba Exitosa \n\n");
+
+		//si el sistema operativo es WINDOWS
+
+		#if defined(_WIN32) || defined(_WIN64)
 		Color(BLACK, WHITE);	// Devolvemos el color original de la consola.
+		#endif // _WIN32 or _WIN64
+
+
 	}
 
 	else
 	{
-		Color(BLACK, RED);		//Texto en color rojo y fondo Negro
+		//si el sistema operativo es WINDOWS
+
+		#if defined(_WIN32) || defined(_WIN64)
+		Color(BLACK, RED);	//Texto en color rojo y fondo Negro
+		#endif // _WIN32 or _WIN64
+
 		printf("Prueba Fallada \n\n");
-		Color(BLACK, WHITE);	// Devolvemos el color original de la consola.
+
+		//si el sistema operativo es WINDOWS
+
+		#if defined(_WIN32) || defined(_WIN64)
+		Color(BLACK, WHITE);	// Devolvemos el color original de la consola.	
+		#endif // _WIN32 or _WIN64
+
+
 	}
 
 
@@ -327,16 +547,41 @@ int main(int argc, char*argv[]) {
 
 	if (parseCmdline(test9_argc, test9_argv, p2_function, &user_info) == PARSER_ERROR)
 	{
-		Color(BLACK, LGREEN);	//Texto en color Verde Claro y fondo Negro
+		//si el sistema operativo es WINDOWS
+
+		#if defined(_WIN32) || defined(_WIN64)
+		Color(BLACK, LGREEN); //Texto en color Verde Claro y fondo Negro
+		#endif // _WIN32 or _WIN64
+
+
 		printf("Prueba Exitosa \n\n");
+
+		//si el sistema operativo es WINDOWS
+
+		#if defined(_WIN32) || defined(_WIN64)
 		Color(BLACK, WHITE);	// Devolvemos el color original de la consola.
+		#endif // _WIN32 or _WIN64
+
+
 	}
 
 	else
 	{
-		Color(BLACK, RED);		//Texto en color rojo y fondo Negro
+		//si el sistema operativo es WINDOWS
+
+		#if defined(_WIN32) || defined(_WIN64)
+		Color(BLACK, RED);	//Texto en color rojo y fondo Negro
+		#endif // _WIN32 or _WIN64
+
 		printf("Prueba Fallada \n\n");
-		Color(BLACK, WHITE);	// Devolvemos el color original de la consola.
+
+		//si el sistema operativo es WINDOWS
+
+		#if defined(_WIN32) || defined(_WIN64)
+		Color(BLACK, WHITE);	// Devolvemos el color original de la consola.	
+		#endif // _WIN32 or _WIN64
+
+
 	}
 
 
@@ -349,16 +594,41 @@ int main(int argc, char*argv[]) {
 
 	if (parseCmdline(test10_argc, test10_argv, p2_function, &user_info) == PARSER_ERROR)
 	{
-		Color(BLACK, LGREEN);	//Texto en color Verde Claro y fondo Negro
+		//si el sistema operativo es WINDOWS
+
+		#if defined(_WIN32) || defined(_WIN64)
+		Color(BLACK, LGREEN); //Texto en color Verde Claro y fondo Negro
+		#endif // _WIN32 or _WIN64
+
+
 		printf("Prueba Exitosa \n\n");
+
+		//si el sistema operativo es WINDOWS
+
+		#if defined(_WIN32) || defined(_WIN64)
 		Color(BLACK, WHITE);	// Devolvemos el color original de la consola.
+		#endif // _WIN32 or _WIN64
+
+
 	}
 
 	else
 	{
-		Color(BLACK, RED);
+		//si el sistema operativo es WINDOWS
+
+		#if defined(_WIN32) || defined(_WIN64)
+		Color(BLACK, RED);	//Texto en color rojo y fondo Negro
+		#endif // _WIN32 or _WIN64
+
 		printf("Prueba Fallada \n\n");
-		Color(BLACK, WHITE);	// Devolvemos el color original de la consola.
+
+		//si el sistema operativo es WINDOWS
+
+		#if defined(_WIN32) || defined(_WIN64)
+		Color(BLACK, WHITE);	// Devolvemos el color original de la consola.	
+		#endif // _WIN32 or _WIN64
+
+
 	}
 
 
@@ -372,16 +642,41 @@ int main(int argc, char*argv[]) {
 
 	if (parseCmdline(test11_argc, test11_argv, p2_function, &user_info) == PARSER_ERROR)
 	{
-		Color(BLACK, LGREEN);	//Texto en color Verde Claro y fondo Negro
+		//si el sistema operativo es WINDOWS
+
+		#if defined(_WIN32) || defined(_WIN64)
+		Color(BLACK, LGREEN); //Texto en color Verde Claro y fondo Negro
+		#endif // _WIN32 or _WIN64
+
+
 		printf("Prueba Exitosa \n\n");
+
+		//si el sistema operativo es WINDOWS
+
+		#if defined(_WIN32) || defined(_WIN64)
 		Color(BLACK, WHITE);	// Devolvemos el color original de la consola.
+		#endif // _WIN32 or _WIN64
+
+
 	}
 
 	else
 	{
-		Color(BLACK, RED);		//Texto en color rojo y fondo Negro
+		//si el sistema operativo es WINDOWS
+
+		#if defined(_WIN32) || defined(_WIN64)
+		Color(BLACK, RED);	//Texto en color rojo y fondo Negro
+		#endif // _WIN32 or _WIN64
+
 		printf("Prueba Fallada \n\n");
-		Color(BLACK, WHITE);	// Devolvemos el color original de la consola.
+
+		//si el sistema operativo es WINDOWS
+
+		#if defined(_WIN32) || defined(_WIN64)
+		Color(BLACK, WHITE);	// Devolvemos el color original de la consola.	
+		#endif // _WIN32 or _WIN64
+
+
 	}
 
 
@@ -396,18 +691,42 @@ int main(int argc, char*argv[]) {
 
 	if (parseCmdline(test12_argc, test12_argv, p2_function, &user_info) == PARSER_ERROR)
 	{
-		Color(BLACK, LGREEN);	//Texto en color Verde Claro y fondo Negro
+		//si el sistema operativo es WINDOWS
+
+		#if defined(_WIN32) || defined(_WIN64)
+		Color(BLACK, LGREEN); //Texto en color Verde Claro y fondo Negro
+		#endif // _WIN32 or _WIN64
+
+
 		printf("Prueba Exitosa \n\n");
+
+		//si el sistema operativo es WINDOWS
+
+		#if defined(_WIN32) || defined(_WIN64)
 		Color(BLACK, WHITE);	// Devolvemos el color original de la consola.
+		#endif // _WIN32 or _WIN64
+
+
 	}
 
 	else
 	{
-		Color(BLACK, RED);		//Texto en color rojo y fondo Negro
-		printf("Prueba Fallada \n\n");
-		Color(BLACK, WHITE);	// Devolvemos el color original de la consola.
-	}
+		//si el sistema operativo es WINDOWS
 
+		#if defined(_WIN32) || defined(_WIN64)
+		Color(BLACK, RED);	//Texto en color rojo y fondo Negro
+		#endif // _WIN32 or _WIN64
+
+		printf("Prueba Fallada \n\n");
+
+		//si el sistema operativo es WINDOWS
+
+		#if defined(_WIN32) || defined(_WIN64)
+		Color(BLACK, WHITE);	// Devolvemos el color original de la consola.	
+		#endif // _WIN32 or _WIN64
+
+
+	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -420,16 +739,41 @@ int main(int argc, char*argv[]) {
 
 	if (parseCmdline(test13_argc, test13_argv, p2_function, &user_info) != PARSER_ERROR)
 	{
-		Color(BLACK, LGREEN);	//Texto en color Verde Claro y fondo Negro
+		//si el sistema operativo es WINDOWS
+
+		#if defined(_WIN32) || defined(_WIN64)
+		Color(BLACK, LGREEN); //Texto en color Verde Claro y fondo Negro
+		#endif // _WIN32 or _WIN64
+
+
 		printf("Prueba Exitosa \n\n");
+
+		//si el sistema operativo es WINDOWS
+
+		#if defined(_WIN32) || defined(_WIN64)
 		Color(BLACK, WHITE);	// Devolvemos el color original de la consola.
+		#endif // _WIN32 or _WIN64
+
+
 	}
 
 	else
 	{
-		Color(BLACK, RED);		//Texto en color rojo y fondo Negro
+		//si el sistema operativo es WINDOWS
+
+		#if defined(_WIN32) || defined(_WIN64)
+		Color(BLACK, RED);	//Texto en color rojo y fondo Negro
+		#endif // _WIN32 or _WIN64
+
 		printf("Prueba Fallada \n\n");
-		Color(BLACK, WHITE);	// Devolvemos el color original de la consola.
+
+		//si el sistema operativo es WINDOWS
+
+		#if defined(_WIN32) || defined(_WIN64)
+		Color(BLACK, WHITE);	// Devolvemos el color original de la consola.	
+		#endif // _WIN32 or _WIN64
+
+
 	}
 
 
@@ -444,27 +788,61 @@ int main(int argc, char*argv[]) {
 
 	if (parseCmdline(test14_argc, test14_argv, p2_function, &user_info) == PARSER_ERROR)
 	{
-		Color(BLACK, LGREEN);	//Texto en color Verde Claro y fondo Negro
+		//si el sistema operativo es WINDOWS
+
+		#if defined(_WIN32) || defined(_WIN64)
+		Color(BLACK, LGREEN); //Texto en color Verde Claro y fondo Negro
+		#endif // _WIN32 or _WIN64
+
+
 		printf("Prueba Exitosa \n\n");
+
+		//si el sistema operativo es WINDOWS
+
+		#if defined(_WIN32) || defined(_WIN64)
 		Color(BLACK, WHITE);	// Devolvemos el color original de la consola.
+		#endif // _WIN32 or _WIN64
+
+
 	}
 
 	else
 	{
-		Color(BLACK, RED);		//Texto en color rojo y fondo Negro
+		//si el sistema operativo es WINDOWS
+
+		#if defined(_WIN32) || defined(_WIN64)
+		Color(BLACK, RED);	//Texto en color rojo y fondo Negro
+		#endif // _WIN32 or _WIN64
+
 		printf("Prueba Fallada \n\n");
-		Color(BLACK, WHITE);	// Devolvemos el color original de la consola.
+
+		//si el sistema operativo es WINDOWS
+
+		#if defined(_WIN32) || defined(_WIN64)
+		Color(BLACK, WHITE);	// Devolvemos el color original de la consola.	
+		#endif // _WIN32 or _WIN64
+
+
 	}
 
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+	//si el sistema operativo es WINDOWS
 
+	#if defined(_WIN32) || defined(_WIN64)
 	Color(MAGENTA, BROWN);		//Texto en color azul y fondo blanco
+	#endif // _WIN32 or _WIN64
 
+	
 	printf("\n\n\n\n PRESIONAR ENTER PARA FINALIZAR PROGRAMA <-- <-- <-- <-- <-- <-- <-- <-- <-- <-- <-- <-- <--\n\n");
 	
+	//si el sistema operativo es WINDOWS
+
+	#if defined(_WIN32) || defined(_WIN64)
 	Color(BLACK, WHITE);	// Devolvemos el color original de la consola.
+	#endif // _WIN32 or _WIN64
+
 	
 	getchar();				
 
@@ -625,13 +1003,15 @@ bool str_is_number(const char* str)
 
 
 
-         
+//si el sistema operativo es WINDOWS
+
+#if defined(_WIN32) || defined(_WIN64)
 
 
 // Función para cambiar el color del fondo y/o pantalla 
 //	sacada de https://foro.elhacker.net/programacion_cc/cambio_colores_en_un_solo_printf_en_c-t484932.0.html
 
-void Color(int Background, int Text) { 
+void Color(int Background, int Text) {
 
 	HANDLE Console = GetStdHandle(STD_OUTPUT_HANDLE); // Tomamos la consola.
 
@@ -642,3 +1022,6 @@ void Color(int Background, int Text) {
 	SetConsoleTextAttribute(Console, New_Color); // Guardamos los cambios en la Consola.
 
 }
+
+
+#endif // _WIN32 or _WIN64
