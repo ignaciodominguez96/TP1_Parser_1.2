@@ -1,3 +1,18 @@
+/*
+
+TP1 EDA 2019 GRUPO 1 - ParseCmdLine
+INTEGRANTES:
+-
+  DIMAS MIGUEL BOSCH
+  PEDRO DALLA LASTA
+  IGNACIO DOMINGUEZ
+ 
+ -
+
+*/
+
+
+
 //--------------------------------------------LIBRERIAS-----------------------------------------//
 
 #include <stdio.h>
