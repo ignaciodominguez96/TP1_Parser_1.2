@@ -1,42 +1,124 @@
+//--------------------------------------------LIBRERIAS-----------------------------------------//
+
 #include <stdio.h>
 #include <string.h>
 #include <stdbool.h>
-#include <stdlib.h>     /* atof */
-#include <ctype.h>		/* isdigit */
+#include <stdlib.h>    
+#include <ctype.h>		
 #include "pcmld.h"
 
 
+#include <Windows.h>  // API del Sistema Operativo de Windows (Permite trabajar sobre la Consola).
+					  //sacado de 
+					  //https://foro.elhacker.net/programacion_cc/cambio_colores_en_un_solo_printf_en_c-t484932.0.html
+
+
+//-------------------------------------DEFINES and CONSTANTES---------------------------------------//
 
 
 #define EXIT_LOOP 0
 
-#define MAX_NUM_VALUE	5200
-#define	MIN_NUM_VALUE	-200
+#define MAX_NUM_VALUE	5200		//valor maximo que permite como value, sin poner dentro de la lista de value valido
+#define	MIN_NUM_VALUE	-200		//valor minimo que permite como value, sin poner dentro de la lista de value valido
 
 #define STR_EQUAL	0
 
-enum type_of_operand { KEY, VALUE, PARAMETER };
+#define	TRUE	1
+#define FALSE	0
+
+
+
+enum type_of_operand { KEY, VALUE, PARAMETER }; //enum que me define los tipos de operando
+
+
+
+//enum sacado de https://foro.elhacker.net/programacion_cc/cambio_colores_en_un_solo_printf_en_c-t484932.0.html
+
+enum colors { // Listado de colores (La letra "L" al inicio, indica que es un color más claro que su antecesor).
+	BLACK = 0,
+	BLUE = 1,
+	GREEN = 2,
+	CYAN = 3,
+	RED = 4,
+	MAGENTA = 5,
+	BROWN = 6,
+	LGREY = 7,
+	DGREY = 8,
+	LBLUE = 9,
+	LGREEN = 10,
+	LCYAN = 11,
+	LRED = 12,
+	LMAGENTA = 13,
+	YELLOW = 14,
+	WHITE = 15
+}; 
+
+
+
+
+
+//--------------------------------------------ESTRUCTURAS-----------------------------------------//
 
 typedef struct {
 
-	int cant_valid_keys;
-	int cant_valid_values;
-	int cant_valid_params;
+	int cant_valid_keys;	//me dice cuantos keys validos hay en la lista de keys validos
+	int cant_valid_values;	//me dice cuantos values validos hay en la lista de values validos
+	int cant_valid_params;	//me dice cuantos parameters validos hay en la lista de parameters validos
 	
-	char *(*p2_valid_key)[];
-	char *(*p2_valid_param)[];
-	char *(*p2_valid_value)[];
+	char *(*p2_valid_key)[];	//lista de keys validos
+	char *(*p2_valid_param)[];	//lista de vaLues validos
+	char *(*p2_valid_value)[];	//lista de parameters validos
 
 } userdata_t;
 
+
+
+
+
+
+//------------------------------------------FUNCIONES-------------------------------------------------//
+
 int parseCallback(char *key, char *value, void *userData);
+
+/*
+Esta función es llamada cada vez que parseCmdLine() encuentra una opción o un parámetro.
+
+La función de callback deberá devolver 1
+si la interpretación de las opciones o parámetros fuera correcta, y 0 para indicar
+que el procesamiento debe detenerse porque se encontró una opción o
+parámetro inválido. */
+
+
 /*Funciones que utiliza el callback*/
-bool is_valid_str(char *str, void *valid_strs, int type_of_operand);
+int is_valid_str(char *str, void *valid_strs, int type_of_operand);
 // validate_letterstr devuelve 1 si el string pertenece a la lista de opciones/parametros validos sino 0
 
 bool str_is_number(const char* str); //funcion para fijarse si el string es un numero float (positivo o negativo)
 
+
+
+void Color(int Background, int Text); // Prototipo de función  
+									  //sacado de 
+									  //https://foro.elhacker.net/programacion_cc/cambio_colores_en_un_solo_printf_en_c-t484932.0.html
+
+
+
+
+//--------------------------------------------MAIN--------------------------------------------------//
+
+
 int main(int argc, char*argv[]) {
+
+	
+	Color(BLACK, YELLOW);		//Texto en color amarillo y fondo Negro
+	printf("El programa ademas de realizar lo pedido por consigna, acepta como value valido a un numero float que\n ");
+	printf("se encuentre dentro del rango %f y %f , definidas por los defines MIN_NUM_VALUE y MAX_NUM_VALUE \n\n   " , (double) MIN_NUM_VALUE , (double) MAX_NUM_VALUE);
+
+	Color(BLACK, WHITE);		// Devolvemos el color original de la consola.
+
+
+
+
 
 	char *valid_key[] = { "-key","key","font","queue","color" }; // lista de opciones válidas
 	char *valid_values[] = { "-value" ,"value","times","grow" };
@@ -56,32 +138,52 @@ int main(int argc, char*argv[]) {
 	pCallback p2_function = parseCallback;
 
 
-	/////////////////////////////
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	printf("Prueba 1 ---> Error de Forma 1: Opción sin valor {'path','-key'} \n ");
 
 	char *test1_argv[] = { "path", "-key" };
 	int test1_argc = sizeof(test1_argv) / sizeof(test1_argv[0]) ;
 
-	if ( parseCmdline(test1_argc, test1_argv, p2_function, &user_info) == PARSER_ERROR)
+	if (parseCmdline(test1_argc, test1_argv, p2_function, &user_info) == PARSER_ERROR)
+	{
+		Color(BLACK, LGREEN); //Texto en color Verde Claro y fondo Negro
 		printf("Prueba Exitosa \n\n");
+		Color(BLACK, WHITE);	// Devolvemos el color original de la consola.
+	}
+		
 	else
+	{
+		Color(BLACK, RED);	//Texto en color rojo y fondo Negro
 		printf("Prueba Fallada \n\n");
+		Color(BLACK, WHITE);	// Devolvemos el color original de la consola.
+	}
+		
 
-	/////////////////////////////
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	printf("Prueba 2 ---> Error de Forma 2: Opción sin clave {'path','-'} \n ");
+	printf("Prueba 2 ---> Error de Forma 2: Opcion sin clave {'path','-'} \n ");
 
 	char * test2_argv[] = { "path", "-" };
 	int test2_argc = sizeof(test2_argv) / sizeof(test2_argv[0]) ;
 
 	if ( parseCmdline(test2_argc, test2_argv, p2_function, &user_info) == PARSER_ERROR)
+	{
+		Color(BLACK, LGREEN);	//Texto en color Verde Claro y fondo Negro
 		printf("Prueba Exitosa \n\n");
+		Color(BLACK, WHITE);	// Devolvemos el color original de la consola.
+	}
+
 	else
+	{
+		Color(BLACK, RED);		//Texto en color rojo y fondo Negro
 		printf("Prueba Fallada \n\n");
+		Color(BLACK, WHITE);	// Devolvemos el color original de la consola.
+	}
 
 
-	/////////////////////////////
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	printf("Prueba 3 ---> Opcion valida 1: Opcion con clave y valor {'path','-key','value'} \n ");
 
@@ -89,11 +191,21 @@ int main(int argc, char*argv[]) {
 	int test3_argc = sizeof(test3_argv) / sizeof(test3_argv[0]) ;
 
 	if ( parseCmdline(test3_argc, test3_argv, p2_function, &user_info) != PARSER_ERROR)
+	{
+		Color(BLACK, LGREEN);	//Texto en color Verde Claro y fondo Negro
 		printf("Prueba Exitosa \n\n");
-	else
-		printf("Prueba Fallada \n\n");
+		Color(BLACK, WHITE);	// Devolvemos el color original de la consola.
+	}
 
-	/////////////////////////////
+	else
+	{
+		Color(BLACK, RED);		//Texto en color rojo y fondo Negro
+		printf("Prueba Fallada \n\n");
+		Color(BLACK, WHITE);	// Devolvemos el color original de la consola.
+	}
+
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	printf("Prueba 4 ---> Opcion valida 2: Opcion con clave (con ademas el prefijo de la clave) y valor {'path','--key','value'} \n ");
 
@@ -101,11 +213,21 @@ int main(int argc, char*argv[]) {
 	int test4_argc = sizeof(test4_argv) / sizeof(test4_argv[0]) ;
 
 	if ( parseCmdline(test4_argc, test4_argv, p2_function, &user_info) != PARSER_ERROR)
+	{
+		Color(BLACK, LGREEN);	//Texto en color Verde Claro y fondo Negro
 		printf("Prueba Exitosa \n\n");
-	else
-		printf("Prueba Fallada \n\n");
+		Color(BLACK, WHITE);	// Devolvemos el color original de la consola.
+	}
 
-	/////////////////////////////
+	else
+	{
+		Color(BLACK, RED);		//Texto en color rojo y fondo Negro
+		printf("Prueba Fallada \n\n");
+		Color(BLACK, WHITE);	// Devolvemos el color original de la consola.
+	}
+
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	printf("Prueba 5 ---> Opcion valida 3: Opcion con clave y valor (con ademas el prefijo de la clave) {'path','--key','-value'} \n ");
 
@@ -113,11 +235,21 @@ int main(int argc, char*argv[]) {
 	int test5_argc = sizeof(test5_argv) / sizeof(test5_argv[0]) ;
 
 	if ( parseCmdline(test5_argc, test5_argv, p2_function, &user_info) != PARSER_ERROR)
+	{
+		Color(BLACK, LGREEN);	//Texto en color Verde Claro y fondo Negro
 		printf("Prueba Exitosa \n\n");
-	else
-		printf("Prueba Fallada \n\n");
+		Color(BLACK, WHITE);	// Devolvemos el color original de la consola.
+	}
 
-	/////////////////////////////
+	else
+	{
+		Color(BLACK, RED);		//Texto en color rojo y fondo Negro
+		printf("Prueba Fallada \n\n");
+		Color(BLACK, WHITE);	// Devolvemos el color original de la consola.
+	}
+
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 	printf("Prueba 6 ---> Opcion valida 4: Opcion con clave y valor numero en rango valido {'path','--key', number_str_in_the_rank } \n ");
@@ -126,11 +258,21 @@ int main(int argc, char*argv[]) {
 	int test6_argc = sizeof(test6_argv) / sizeof(test6_argv[0]) ;
 
 	if (parseCmdline(test6_argc, test6_argv, p2_function, &user_info) != PARSER_ERROR)
+	{
+		Color(BLACK, LGREEN);	//Texto en color Verde Claro y fondo Negro
 		printf("Prueba Exitosa \n\n");
-	else
-		printf("Prueba Fallada \n\n");
+		Color(BLACK, WHITE);	// Devolvemos el color original de la consola.
+	}
 
-	/////////////////////////////
+	else
+	{
+		Color(BLACK, RED);		//Texto en color rojo y fondo Negro
+		printf("Prueba Fallada \n\n");
+		Color(BLACK, WHITE);	// Devolvemos el color original de la consola.
+	}
+
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 
@@ -140,11 +282,21 @@ int main(int argc, char*argv[]) {
 	int test7_argc = sizeof(test7_argv) / sizeof(test7_argv[0]) ;
 
 	if (parseCmdline(test7_argc, test7_argv, p2_function, &user_info) == PARSER_ERROR)
+	{
+		Color(BLACK, LGREEN);	//Texto en color Verde Claro y fondo Negro
 		printf("Prueba Exitosa \n\n");
-	else
-		printf("Prueba Fallada \n\n");
+		Color(BLACK, WHITE);	// Devolvemos el color original de la consola.
+	}
 
-	/////////////////////////////
+	else
+	{
+		Color(BLACK, RED);		//Texto en color rojo y fondo Negro
+		printf("Prueba Fallada \n\n");
+		Color(BLACK, WHITE);	// Devolvemos el color original de la consola.
+	}
+
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	printf("Prueba 8 ---> Opcion valida 5: Opcion parametro valido {'path','valid_parameter' } \n ");
 
@@ -152,11 +304,21 @@ int main(int argc, char*argv[]) {
 	int test8_argc = sizeof(test8_argv) / sizeof(test8_argv[0]) ;
 
 	if (parseCmdline(test8_argc, test8_argv, p2_function, &user_info) != PARSER_ERROR)
+	{
+		Color(BLACK, LGREEN);	//Texto en color Verde Claro y fondo Negro
 		printf("Prueba Exitosa \n\n");
-	else
-		printf("Prueba Fallada \n\n");
+		Color(BLACK, WHITE);	// Devolvemos el color original de la consola.
+	}
 
-	/////////////////////////////
+	else
+	{
+		Color(BLACK, RED);		//Texto en color rojo y fondo Negro
+		printf("Prueba Fallada \n\n");
+		Color(BLACK, WHITE);	// Devolvemos el color original de la consola.
+	}
+
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	printf("Prueba 9 ---> Opcion invalida 2: Opcion parametro invalido {'path','invalid_parameter' } \n ");
 
@@ -164,11 +326,21 @@ int main(int argc, char*argv[]) {
 	int test9_argc = sizeof(test9_argv) / sizeof(test9_argv[0]) ;
 
 	if (parseCmdline(test9_argc, test9_argv, p2_function, &user_info) == PARSER_ERROR)
+	{
+		Color(BLACK, LGREEN);	//Texto en color Verde Claro y fondo Negro
 		printf("Prueba Exitosa \n\n");
-	else
-		printf("Prueba Fallada \n\n");
+		Color(BLACK, WHITE);	// Devolvemos el color original de la consola.
+	}
 
-	/////////////////////////////
+	else
+	{
+		Color(BLACK, RED);		//Texto en color rojo y fondo Negro
+		printf("Prueba Fallada \n\n");
+		Color(BLACK, WHITE);	// Devolvemos el color original de la consola.
+	}
+
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	printf("Prueba 10 ---> Opcion invalida 3: Opcion key invalido y value valido {'path','invalid_key', 'valid_value' } \n ");
 
@@ -176,11 +348,21 @@ int main(int argc, char*argv[]) {
 	int test10_argc = sizeof(test10_argv) / sizeof(test10_argv[0]) ;
 
 	if (parseCmdline(test10_argc, test10_argv, p2_function, &user_info) == PARSER_ERROR)
+	{
+		Color(BLACK, LGREEN);	//Texto en color Verde Claro y fondo Negro
 		printf("Prueba Exitosa \n\n");
-	else
-		printf("Prueba Fallada \n\n");
+		Color(BLACK, WHITE);	// Devolvemos el color original de la consola.
+	}
 
-	/////////////////////////////
+	else
+	{
+		Color(BLACK, RED);
+		printf("Prueba Fallada \n\n");
+		Color(BLACK, WHITE);	// Devolvemos el color original de la consola.
+	}
+
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 	printf("Prueba 11 ---> Opcion valida 4: Opcion key valido y value invalido {'path','valid_key', 'invalid_value' } \n ");
@@ -189,11 +371,21 @@ int main(int argc, char*argv[]) {
 	int test11_argc = sizeof(test11_argv) / sizeof(test11_argv[0]) ;
 
 	if (parseCmdline(test11_argc, test11_argv, p2_function, &user_info) == PARSER_ERROR)
+	{
+		Color(BLACK, LGREEN);	//Texto en color Verde Claro y fondo Negro
 		printf("Prueba Exitosa \n\n");
-	else
-		printf("Prueba Fallada \n\n");
+		Color(BLACK, WHITE);	// Devolvemos el color original de la consola.
+	}
 
-	/////////////////////////////
+	else
+	{
+		Color(BLACK, RED);		//Texto en color rojo y fondo Negro
+		printf("Prueba Fallada \n\n");
+		Color(BLACK, WHITE);	// Devolvemos el color original de la consola.
+	}
+
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 
@@ -203,11 +395,21 @@ int main(int argc, char*argv[]) {
 	int test12_argc = sizeof(test12_argv) / sizeof(test12_argv[0]) ;
 
 	if (parseCmdline(test12_argc, test12_argv, p2_function, &user_info) == PARSER_ERROR)
+	{
+		Color(BLACK, LGREEN);	//Texto en color Verde Claro y fondo Negro
 		printf("Prueba Exitosa \n\n");
-	else
-		printf("Prueba Fallada \n\n");
+		Color(BLACK, WHITE);	// Devolvemos el color original de la consola.
+	}
 
-	/////////////////////////////
+	else
+	{
+		Color(BLACK, RED);		//Texto en color rojo y fondo Negro
+		printf("Prueba Fallada \n\n");
+		Color(BLACK, WHITE);	// Devolvemos el color original de la consola.
+	}
+
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 
@@ -217,11 +419,21 @@ int main(int argc, char*argv[]) {
 	int test13_argc = sizeof(test13_argv) / sizeof(test13_argv[0]) ;
 
 	if (parseCmdline(test13_argc, test13_argv, p2_function, &user_info) != PARSER_ERROR)
+	{
+		Color(BLACK, LGREEN);	//Texto en color Verde Claro y fondo Negro
 		printf("Prueba Exitosa \n\n");
-	else
-		printf("Prueba Fallada \n\n");
+		Color(BLACK, WHITE);	// Devolvemos el color original de la consola.
+	}
 
-	/////////////////////////////
+	else
+	{
+		Color(BLACK, RED);		//Texto en color rojo y fondo Negro
+		printf("Prueba Fallada \n\n");
+		Color(BLACK, WHITE);	// Devolvemos el color original de la consola.
+	}
+
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 
@@ -231,13 +443,32 @@ int main(int argc, char*argv[]) {
 	int test14_argc = sizeof(test14_argv) / sizeof(test14_argv[0]);
 
 	if (parseCmdline(test14_argc, test14_argv, p2_function, &user_info) == PARSER_ERROR)
+	{
+		Color(BLACK, LGREEN);	//Texto en color Verde Claro y fondo Negro
 		printf("Prueba Exitosa \n\n");
+		Color(BLACK, WHITE);	// Devolvemos el color original de la consola.
+	}
+
 	else
+	{
+		Color(BLACK, RED);		//Texto en color rojo y fondo Negro
 		printf("Prueba Fallada \n\n");
+		Color(BLACK, WHITE);	// Devolvemos el color original de la consola.
+	}
 
-	/////////////////////////////
 
-	getchar();
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+	Color(MAGENTA, BROWN);		//Texto en color azul y fondo blanco
+
+	printf("\n\n\n\n PRESIONAR ENTER PARA FINALIZAR PROGRAMA <-- <-- <-- <-- <-- <-- <-- <-- <-- <-- <-- <-- <--\n\n");
+	
+	Color(BLACK, WHITE);	// Devolvemos el color original de la consola.
+	
+	getchar();				
+
+
 
 	return 0;
 
@@ -246,19 +477,19 @@ int main(int argc, char*argv[]) {
 
 int parseCallback(char *key, char *value, void *userData) {
 
-	bool no_error = true;
+	int no_error = TRUE;
 	userdata_t * p2userinfo = (userdata_t*)userData;
 	
 	
 	if (key) { // errores correspondientes a opciones	
 		if (!value) { // si es opcion y es el ultimo argumento -> error
 
-			no_error = false;
+			no_error = FALSE;
 		}
 		if (no_error) {
 
 			no_error = is_valid_str(key , userData, KEY);
-			// evadimos el OPTION_IDENTIFIER
+		
 		}
 
 		if (no_error) {
@@ -277,9 +508,9 @@ int parseCallback(char *key, char *value, void *userData) {
 }
 
 
-bool is_valid_str(char *str, void *valid_strs, int type_of_operand) {
+int is_valid_str(char *str, void *valid_strs, int type_of_operand) {
 
-	bool valid_str;
+	int valid_str;
 	userdata_t *p2_user_data = (userdata_t*)valid_strs;
 	int i;
 
@@ -293,7 +524,7 @@ bool is_valid_str(char *str, void *valid_strs, int type_of_operand) {
 		i = p2_user_data->cant_valid_params;
 	}
 
-	valid_str = false;
+	valid_str = FALSE;
 
 
 	if (type_of_operand == KEY) {
@@ -301,7 +532,7 @@ bool is_valid_str(char *str, void *valid_strs, int type_of_operand) {
 		while (i--) {
 			if (strcmp(str, *(*(p2_user_data->p2_valid_key) + i)) == STR_EQUAL) {
 				i = EXIT_LOOP;
-				valid_str = true;
+				valid_str = TRUE;
 			}
 		}
 	}
@@ -310,7 +541,7 @@ bool is_valid_str(char *str, void *valid_strs, int type_of_operand) {
 		while (i--) {
 			if (strcmp(str, *(*(p2_user_data->p2_valid_value) + i)) == STR_EQUAL) {
 				i = EXIT_LOOP;
-				valid_str = true;
+				valid_str = TRUE;
 			}
 			else if (str_is_number(str) == true) //value can be a number
 			{
@@ -319,7 +550,7 @@ bool is_valid_str(char *str, void *valid_strs, int type_of_operand) {
 				if (((number < MAX_NUM_VALUE) && (number > MIN_NUM_VALUE))) //but value can be a number between a rank
 				{
 					i = EXIT_LOOP;
-					valid_str = true;
+					valid_str = TRUE;
 
 				}
 				
@@ -335,7 +566,7 @@ bool is_valid_str(char *str, void *valid_strs, int type_of_operand) {
 
 			if (strcmp(str, *(*(p2_user_data->p2_valid_param) + i)) == STR_EQUAL) {
 				i = EXIT_LOOP;
-				valid_str = true;
+				valid_str = TRUE;
 			}
 		}
 
@@ -388,4 +619,26 @@ bool str_is_number(const char* str)
 	}
 
 	return true;
+}
+
+
+
+
+
+         
+
+
+// Función para cambiar el color del fondo y/o pantalla 
+//	sacada de https://foro.elhacker.net/programacion_cc/cambio_colores_en_un_solo_printf_en_c-t484932.0.html
+
+void Color(int Background, int Text) { 
+
+	HANDLE Console = GetStdHandle(STD_OUTPUT_HANDLE); // Tomamos la consola.
+
+	// Para cambiar el color, se utilizan números desde el 0 hasta el 255.
+	// Pero, para convertir los colores a un valor adecuado, se realiza el siguiente cálculo.
+	int    New_Color = Text + (Background * 16);
+
+	SetConsoleTextAttribute(Console, New_Color); // Guardamos los cambios en la Consola.
+
 }
